@@ -1,0 +1,55 @@
+/* Título del formulario de login */
+.login-form-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--vn-texto);
+  margin-bottom: 1.25rem;
+}
+
+/* Acceso rápido — fila pequeña y discreta */
+.demo-acceso {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.demo-acceso-label {
+  font-size: 0.72rem;
+  color: var(--vn-texto-suave);
+  font-weight: 500;
+}
+
+.demo-btn {
+  font-size: 0.72rem;
+  color: var(--vn-texto-suave);
+  background: transparent;
+  border: 1px solid var(--vn-borde);
+  border-radius: 20px;
+  padding: 0.2rem 0.65rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.demo-btn:hover {
+  border-color: var(--vn-verde);
+  color: var(--vn-verde);
+}
+
+
+/* Ajuste del input-group para que los bordes no se dupliquen */
+.input-group .form-control.is-invalid ~ .input-group-text {
+  border-color: #dc3545;
+}
+.input-group .form-control.is-valid ~ .input-group-text {
+  border-color: #198754;
+}
+
+/* Spinner de Angular Material dentro del botón */
+.btn mat-spinner {
+  display: inline-flex;
+}

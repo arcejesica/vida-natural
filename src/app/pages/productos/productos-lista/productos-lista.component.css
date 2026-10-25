@@ -1,0 +1,7 @@
+/* Estilos específicos de la lista de productos */
+
+/* Badge de categoría en el select de filtro */
+.filtro-activo {
+  border-color: var(--vn-verde) !important;
+  box-shadow: 0 0 0 2px rgba(45, 122, 79, 0.2);
+}

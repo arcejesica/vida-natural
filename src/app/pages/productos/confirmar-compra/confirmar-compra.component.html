@@ -1,0 +1,59 @@
+<div class="dialog-container">
+
+  <!-- Ícono de carrito -->
+  <div class="dialog-icon dialog-icon-compra">
+    <i class="bi bi-cart-check-fill"></i>
+  </div>
+
+  <!-- Título -->
+  <h2 mat-dialog-title class="dialog-title">Confirmar compra</h2>
+
+  <!-- Contenido con el resumen de la compra -->
+  <!-- data viene de MAT_DIALOG_DATA inyectado desde ProductoDetalleComponent -->
+  <mat-dialog-content class="dialog-content">
+
+    <p class="mb-3">
+      Estás por comprar
+      <strong>{{ data.cantidad }} {{ data.cantidad === 1 ? 'unidad' : 'unidades' }}</strong>
+      de
+      <strong>"{{ data.nombreProducto }}"</strong>.
+    </p>
+
+    <!-- Resumen con interpolación y CurrencyPipe -->
+    <div class="compra-resumen">
+      <div class="compra-resumen-fila">
+        <span>Precio unitario</span>
+        <span>{{ data.precioUnitario | currency:'ARS':'symbol':'1.0-0' }}</span>
+      </div>
+      <div class="compra-resumen-fila">
+        <span>Cantidad</span>
+        <span>× {{ data.cantidad }}</span>
+      </div>
+      <div class="compra-resumen-fila compra-resumen-total">
+        <span>Total a pagar</span>
+        <span>{{ data.total | currency:'ARS':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+
+  </mat-dialog-content>
+
+  <!-- Botones de acción -->
+  <mat-dialog-actions class="dialog-actions">
+    <!-- Cancelar: cierra el diálogo con false -->
+    <button
+      mat-button
+      class="btn btn-vn-outline btn-sm"
+      (click)="cancelar()">
+      Cancelar
+    </button>
+
+    <!-- Confirmar: cierra el diálogo con true -->
+    <button
+      mat-button
+      class="btn btn-vn-primary btn-sm ms-2"
+      (click)="confirmar()">
+      <i class="bi bi-cart-check me-1"></i> Confirmar compra
+    </button>
+  </mat-dialog-actions>
+
+</div>

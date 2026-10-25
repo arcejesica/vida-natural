@@ -1,0 +1,40 @@
+/* Etiqueta y valor de los datos del detalle */
+.detalle-dato {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detalle-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--vn-texto-suave);
+}
+
+.detalle-valor {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--vn-texto);
+}
+
+.detalle-precio {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--vn-verde);
+}
+
+/* Badge de categoría en detalle */
+.badge-categoria {
+  display: inline-block;
+  background-color: var(--vn-verde-suave);
+  color: var(--vn-verde);
+  border: 1px solid var(--vn-borde);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

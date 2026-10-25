@@ -1,0 +1,39 @@
+/* Encabezado del dashboard */
+.dashboard-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--vn-verde-suave), var(--vn-beige));
+  border-radius: 14px;
+  border: 1px solid var(--vn-borde);
+}
+
+.dashboard-header-icon {
+  font-size: 2.8rem;
+  color: var(--vn-verde);
+  flex-shrink: 0;
+}
+
+/* Accesos rápidos */
+.quick-access-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--vn-blanco);
+  border: 1px solid var(--vn-borde);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: var(--vn-texto);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  box-shadow: 0 2px 8px var(--vn-sombra);
+}
+
+.quick-access-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--vn-sombra);
+  border-color: var(--vn-verde-claro);
+  color: var(--vn-texto);
+}
+
+.quick-access-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}

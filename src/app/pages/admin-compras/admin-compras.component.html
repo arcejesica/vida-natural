@@ -1,0 +1,140 @@
+<div class="page-container">
+  <div class="container">
+
+    <!-- Encabezado -->
+    <div class="mb-4">
+      <h1 class="section-title">
+        <i class="bi bi-receipt me-2"></i>Historial de compras
+      </h1>
+      <p class="section-subtitle">
+        Todas las compras registradas en el sistema
+      </p>
+    </div>
+
+    <!-- Spinner -->
+    <div *ngIf="cargando" class="loading-container">
+      <div class="spinner-border" style="color: var(--vn-verde);" role="status"></div>
+      <span>Cargando compras...</span>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error && !cargando" class="alert alert-danger alert-vn">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+    </div>
+
+    <div *ngIf="!cargando && !error">
+
+      <!-- ── Estadísticas ──────────────────────────────────────────────── -->
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-blue">
+              <i class="bi bi-bag-check"></i>
+            </div>
+            <div>
+              <div class="stat-value">{{ totalCompras }}</div>
+              <div class="stat-label">Compras realizadas</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-green">
+              <i class="bi bi-cash-coin"></i>
+            </div>
+            <div>
+              <div class="stat-value" style="font-size: 1.3rem;">
+                {{ totalVendido | currency:'ARS':'symbol':'1.0-0' }}
+              </div>
+              <div class="stat-label">Total vendido</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Filtros ──────────────────────────────────────────────────── -->
+      <div class="card-vn p-3 mb-4">
+        <div class="row g-2 align-items-end">
+          <div class="col-12 col-md-4">
+            <label class="form-label small fw-medium">Buscar por nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Ej: Juan Pérez"
+              [(ngModel)]="filtroNombre"
+              (ngModelChange)="aplicarFiltros()">
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label small fw-medium">Buscar por email</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Ej: usuario@..."
+              [(ngModel)]="filtroEmail"
+              (ngModelChange)="aplicarFiltros()">
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label small fw-medium">Buscar por producto</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Ej: Granola"
+              [(ngModel)]="filtroProducto"
+              (ngModelChange)="aplicarFiltros()">
+          </div>
+          <div class="col-12 col-md-1 d-flex align-items-end">
+            <button
+              class="btn btn-vn-outline w-100"
+              (click)="limpiarFiltros()"
+              title="Limpiar filtros">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sin compras -->
+      <div *ngIf="comprasFiltradas.length === 0" class="empty-state">
+        <i class="bi bi-receipt-cutoff d-block"></i>
+        <p>No hay compras que coincidan con los filtros.</p>
+        <button class="btn btn-vn-outline" (click)="limpiarFiltros()">
+          <i class="bi bi-arrow-counterclockwise me-1"></i> Limpiar filtros
+        </button>
+      </div>
+
+      <!-- Tabla -->
+      <div *ngIf="comprasFiltradas.length > 0" class="table-responsive table-vn">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Email</th>
+              <th>Producto</th>
+              <th class="text-center">Cant.</th>
+              <th>Precio unit.</th>
+              <th>Total</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- *ngFor: iteramos sobre las compras filtradas -->
+            <tr *ngFor="let compra of comprasFiltradas">
+              <td class="fw-medium">{{ compra.usuarioNombre }}</td>
+              <td class="text-muted small">{{ compra.usuarioEmail }}</td>
+              <td>{{ compra.productoNombre }}</td>
+              <td class="text-center">{{ compra.cantidad }}</td>
+              <td>{{ compra.precioUnitario | currency:'ARS':'symbol':'1.0-0' }}</td>
+              <td class="fw-bold" style="color: var(--vn-verde);">
+                {{ compra.total | currency:'ARS':'symbol':'1.0-0' }}
+              </td>
+              <td class="text-muted small">
+                {{ compra.fecha | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>

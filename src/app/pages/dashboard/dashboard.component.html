@@ -1,0 +1,194 @@
+<!-- =========================================================
+  DashboardComponent — Inicio / Panel principal
+
+  Conceptos Angular aplicados:
+  - Interpolación:       {{ usuarioActual?.nombre }}
+  - *ngIf:              *ngIf="cargando"
+  - *ngFor:             *ngFor="let producto of productosDestacados"
+  - Property Binding:   [class], [totalProductos]="totalProductos"
+  - Event Binding:      (verMas)="onVerMas($event)"
+  - Pipes:              DatePipe → {{ hoy | date:'longDate':'':'es' }}
+  - @Input / @Output:   ProductCardComponent recibe el producto y emite el evento
+========================================================= -->
+
+<div class="page-container">
+  <div class="container">
+
+    <!-- ── Encabezado ────────────────────────────────────────────────── -->
+    <div class="dashboard-header mb-4">
+      <div class="d-flex align-items-center gap-3 mb-1">
+        <i class="bi bi-tree-fill dashboard-header-icon"></i>
+        <div>
+          <!-- Interpolación: muestra el nombre del usuario logueado -->
+          <h1 class="section-title mb-0">Bienvenido a Vida Natural</h1>
+          <!-- Interpolación + Pipe DatePipe -->
+          <p class="section-subtitle mb-0">
+            Gestioná tus productos, consultá información nutricional y promové una alimentación más saludable.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Spinner de carga (*ngIf) ───────────────────────────────────── -->
+    <!-- *ngIf: el spinner solo se muestra si cargando === true -->
+    <div *ngIf="cargando" class="loading-container">
+      <div class="spinner-border" style="color: var(--vn-verde);" role="status"></div>
+      <span>Cargando información...</span>
+    </div>
+
+    <!-- ── Contenido principal (*ngIf) ───────────────────────────────── -->
+    <!-- *ngIf: el contenido se muestra solo cuando terminó de cargar -->
+    <div *ngIf="!cargando">
+
+      <!-- ── Tarjetas de estadísticas ───────────────────────────────── -->
+      <div class="row g-3 mb-5">
+
+        <!-- Tarjeta 1: Total de productos -->
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-green">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <div>
+              <div class="stat-value">{{ totalProductos }}</div>
+              <div class="stat-label">Productos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2: Disponibles -->
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-blue">
+              <i class="bi bi-check2-circle"></i>
+            </div>
+            <div>
+              <div class="stat-value">{{ productosDisponibles }}</div>
+              <div class="stat-label">Disponibles</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3: Sin stock -->
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-orange">
+              <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <div>
+              <div class="stat-value" [class.text-danger]="productosSinStock > 0">
+                {{ productosSinStock }}
+              </div>
+              <div class="stat-label">Sin stock</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4: Stock bajo (stock > 0 y stock <= 10) -->
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-purple">
+              <i class="bi bi-battery-half"></i>
+            </div>
+            <div>
+              <div class="stat-value" [class.text-warning]="productosStockBajo > 0">
+                {{ productosStockBajo }}
+              </div>
+              <div class="stat-label">Stock bajo</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Sección: Productos destacados ──────────────────────────── -->
+      <div class="mb-3 d-flex align-items-center justify-content-between">
+        <div>
+          <h2 class="section-title mb-0">
+            <i class="bi bi-star me-2"></i>Productos destacados
+          </h2>
+          <p class="section-subtitle mb-0">Los primeros productos de tu catálogo</p>
+        </div>
+        <a routerLink="/productos" class="btn btn-vn-outline btn-sm">
+          Ver todos <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+
+      <!-- ── Grid de ProductCards ───────────────────────────────────── -->
+      <!--
+        *ngFor: iteramos sobre los productos destacados.
+        Para cada uno, creamos un ProductCardComponent.
+
+        [producto]="producto"  → Property Binding: le pasamos el producto al hijo (@Input)
+        (verMas)="onVerMas($event)" → Event Binding: escuchamos el evento del hijo (@Output)
+      -->
+      <div class="row g-4 mb-5">
+        <div
+          class="col-12 col-sm-6 col-lg-4"
+          *ngFor="let producto of productosDestacados">
+
+          <!--
+            app-product-card es el COMPONENTE HIJO.
+            El PADRE (Dashboard) le pasa el producto con @Input ([producto])
+            y escucha el evento "Ver más" con @Output ((verMas)).
+          -->
+          <app-product-card
+            [producto]="producto"
+            (verMas)="onVerMas($event)">
+          </app-product-card>
+
+        </div>
+      </div>
+
+      <!-- Estado vacío si no hay productos -->
+      <div *ngIf="productosDestacados.length === 0" class="empty-state">
+        <i class="bi bi-inbox d-block"></i>
+        <p>No hay productos cargados aún.</p>
+        <a routerLink="/productos/nuevo" class="btn btn-vn-primary">
+          <i class="bi bi-plus me-1"></i> Agregar primer producto
+        </a>
+      </div>
+
+      <!-- ── Accesos rápidos ─────────────────────────────────────────── -->
+      <div class="row g-3">
+        <div class="col-12">
+          <h2 class="section-title">
+            <i class="bi bi-lightning me-2"></i>Accesos rápidos
+          </h2>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+          <a routerLink="/productos" class="quick-access-card text-decoration-none">
+            <i class="bi bi-box-seam quick-access-icon" style="color: var(--vn-verde);"></i>
+            <div>
+              <div class="fw-semibold">Gestionar productos</div>
+              <div class="small text-muted">Ver, editar y administrar el catálogo</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+          <a routerLink="/buscar-alimentos" class="quick-access-card text-decoration-none">
+            <i class="bi bi-search quick-access-icon" style="color: #1565c0;"></i>
+            <div>
+              <div class="fw-semibold">Buscar alimentos</div>
+              <div class="small text-muted">Consultá información nutricional</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4" *ngIf="usuarioActual?.rol === 'admin'">
+          <a routerLink="/productos/nuevo" class="quick-access-card text-decoration-none">
+            <i class="bi bi-plus-circle quick-access-icon" style="color: #6a1b9a;"></i>
+            <div>
+              <div class="fw-semibold">Nuevo producto</div>
+              <div class="small text-muted">Agregar al catálogo</div>
+            </div>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

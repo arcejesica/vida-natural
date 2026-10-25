@@ -1,0 +1,8 @@
+.compras-total-badge {
+  background: var(--vn-verde-suave);
+  border: 1px solid var(--vn-borde);
+  border-radius: 20px;
+  padding: 0.3rem 1rem;
+  font-size: 0.9rem;
+  color: var(--vn-texto);
+}

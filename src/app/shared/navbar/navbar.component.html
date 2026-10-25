@@ -1,0 +1,100 @@
+<nav class="navbar navbar-expand-lg navbar-vida-natural">
+  <div class="container">
+
+    <!-- Logo / Nombre -->
+    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/inicio">
+      <i class="bi bi-tree-fill"></i>
+      Vida Natural
+    </a>
+
+    <!-- Botón hamburguesa (mobile) -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarMenu"
+      aria-controls="navbarMenu"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Links de navegación -->
+    <div class="collapse navbar-collapse" id="navbarMenu">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+            <i class="bi bi-house me-1"></i> Inicio
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/productos" routerLinkActive="active">
+            <i class="bi bi-box-seam me-1"></i> Productos
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/buscar-alimentos" routerLinkActive="active">
+            <i class="bi bi-search me-1"></i> Buscar alimentos
+          </a>
+        </li>
+
+        <!-- "Compras" solo visible para ADMIN -->
+        <li class="nav-item" *ngIf="esAdmin">
+          <a class="nav-link" routerLink="/admin/compras" routerLinkActive="active">
+            <i class="bi bi-receipt me-1"></i> Compras
+          </a>
+        </li>
+
+        <!-- "Mis compras" solo visible para USUARIO (no admin) -->
+        <li class="nav-item" *ngIf="!esAdmin && usuarioActual">
+          <a class="nav-link" routerLink="/mis-compras" routerLinkActive="active">
+            <i class="bi bi-bag-check me-1"></i> Mis compras
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Usuario, rol y botón salir -->
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+
+        <!-- Información del usuario logueado -->
+        <li class="nav-item" *ngIf="usuarioActual">
+          <div class="d-flex align-items-center gap-2 px-2">
+            <i class="bi bi-person-circle text-white-50" style="font-size: 1.2rem;"></i>
+            <div class="d-flex flex-column" style="line-height: 1.2;">
+              <span class="small text-white fw-medium">{{ usuarioActual.nombre }}</span>
+              <!-- Angular Material Chip para mostrar el rol -->
+              <span
+                class="badge rounded-pill"
+                [class.bg-warning]="esAdmin"
+                [class.text-dark]="esAdmin"
+                [class.bg-light]="!esAdmin"
+                [class.text-muted]="!esAdmin"
+                style="font-size: 0.65rem; width: fit-content;">
+                <i class="bi" [class.bi-shield-fill]="esAdmin" [class.bi-person-fill]="!esAdmin"></i>
+                {{ esAdmin ? 'Admin' : 'Usuario' }}
+              </span>
+            </div>
+          </div>
+        </li>
+
+        <!-- Botón Salir -->
+        <li class="nav-item">
+          <button
+            id="btn-logout"
+            class="btn btn-sm btn-outline-light d-flex align-items-center gap-1"
+            (click)="cerrarSesion()"
+            title="Cerrar sesión">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Salir</span>
+          </button>
+        </li>
+
+      </ul>
+    </div>
+
+  </div>
+</nav>

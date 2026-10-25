@@ -1,0 +1,5 @@
+<!-- Navbar: solo visible en rutas autenticadas (no en login) -->
+<app-navbar *ngIf="mostrarNavbar"></app-navbar>
+
+<!-- Aquí se renderiza la página activa según la ruta -->
+<router-outlet></router-outlet>

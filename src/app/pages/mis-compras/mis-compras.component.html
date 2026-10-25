@@ -1,0 +1,85 @@
+<div class="page-container">
+  <div class="container">
+
+    <!-- Encabezado -->
+    <div class="mb-4">
+      <h1 class="section-title">
+        <i class="bi bi-bag-check me-2"></i>Mis compras
+      </h1>
+      <p class="section-subtitle">
+        Historial de compras realizadas con la cuenta
+        <strong>{{ emailUsuario }}</strong>
+      </p>
+    </div>
+
+    <!-- Spinner -->
+    <div *ngIf="cargando" class="loading-container">
+      <div class="spinner-border" style="color: var(--vn-verde);" role="status"></div>
+      <span>Cargando historial...</span>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error && !cargando" class="alert alert-danger alert-vn">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+    </div>
+
+    <!-- Contenido -->
+    <div *ngIf="!cargando && !error">
+
+      <!-- Sin compras -->
+      <div *ngIf="compras.length === 0" class="empty-state">
+        <i class="bi bi-bag-x d-block"></i>
+        <p>Todavía no realizaste ninguna compra.</p>
+        <a routerLink="/productos" class="btn btn-vn-primary">
+          <i class="bi bi-box-seam me-1"></i> Ver productos
+        </a>
+      </div>
+
+      <!-- Tabla de compras -->
+      <div *ngIf="compras.length > 0">
+
+        <!-- Resumen -->
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <p class="text-muted small mb-0">
+            {{ compras.length }} compra(s) registrada(s)
+          </p>
+          <div class="compras-total-badge">
+            Total gastado:
+            <strong>{{ totalGastado | currency:'ARS':'symbol':'1.0-0':'es-AR' }}</strong>
+          </div>
+        </div>
+
+        <!-- Tabla responsive con Bootstrap -->
+        <div class="table-responsive table-vn">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th class="text-center">Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Total</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- *ngFor: iteramos sobre las compras del usuario -->
+              <tr *ngFor="let compra of compras">
+                <td class="fw-medium">{{ compra.productoNombre }}</td>
+                <td class="text-center">{{ compra.cantidad }}</td>
+                <td>{{ compra.precioUnitario | currency:'ARS':'symbol':'1.0-0':'es-AR' }}</td>
+                <td class="fw-bold" style="color: var(--vn-verde);">
+                  {{ compra.total | currency:'ARS':'symbol':'1.0-0':'es-AR' }}
+                </td>
+                <td class="text-muted small">
+                  {{ compra.fecha | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

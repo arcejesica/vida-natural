@@ -1,0 +1,216 @@
+<div class="page-container">
+  <div class="container">
+
+    <!-- ── Encabezado ────────────────────────────────────────────────── -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3">
+      <div>
+        <h1 class="section-title">
+          <i class="bi bi-box-seam me-2"></i>Productos
+        </h1>
+        <p class="section-subtitle mb-0">Administrá tu catálogo de productos</p>
+      </div>
+
+      <!-- Botón Nuevo: solo para admin -->
+      <a
+        *ngIf="esAdmin"
+        routerLink="/productos/nuevo"
+        class="btn btn-vn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Nuevo producto
+      </a>
+    </div>
+
+    <!-- ── Buscador + Filtro ──────────────────────────────────────────── -->
+    <div class="card-vn p-3 mb-4">
+      <div class="row g-2 align-items-end">
+
+        <!-- Buscador por nombre -->
+        <div class="col-12 col-md-6">
+          <label class="form-label small fw-medium mb-1">Buscar por nombre</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              id="buscador-productos"
+              placeholder="Ej: aceite, granola..."
+              [(ngModel)]="terminoBusqueda"
+              (ngModelChange)="onBuscar()">
+            <button
+              *ngIf="terminoBusqueda"
+              class="btn btn-outline-secondary"
+              type="button"
+              (click)="terminoBusqueda = ''; onBuscar()">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filtro por categoría -->
+        <div class="col-12 col-md-4">
+          <label class="form-label small fw-medium mb-1">Filtrar por categoría</label>
+          <select
+            class="form-select"
+            id="filtro-categoria"
+            [(ngModel)]="categoriaFiltrada"
+            (ngModelChange)="onFiltrarCategoria()">
+            <option value="">Todas las categorías</option>
+            <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <!-- Botón limpiar -->
+        <div class="col-12 col-md-2">
+          <button
+            class="btn btn-vn-outline w-100"
+            type="button"
+            (click)="limpiarFiltros()"
+            *ngIf="terminoBusqueda || categoriaFiltrada">
+            <i class="bi bi-x-circle me-1"></i> Limpiar
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Error ──────────────────────────────────────────────────────── -->
+    <div *ngIf="error" class="alert alert-danger alert-vn">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+    </div>
+
+    <!-- ── Spinner de carga ────────────────────────────────────────────── -->
+    <div *ngIf="cargando" class="loading-container">
+      <div class="spinner-border" style="color: var(--vn-verde);" role="status"></div>
+      <span>Cargando productos...</span>
+    </div>
+
+    <!-- ── Tabla de productos ─────────────────────────────────────────── -->
+    <div *ngIf="!cargando && !error" class="table-responsive table-vn">
+      <table class="table mb-0">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let producto of productosFiltrados">
+
+            <!-- Columna: Producto -->
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img
+                  *ngIf="producto.imagenUrl"
+                  [src]="producto.imagenUrl"
+                  [alt]="producto.nombre"
+                  class="product-img">
+                <div
+                  *ngIf="!producto.imagenUrl"
+                  class="product-img-placeholder">
+                  <i class="bi bi-image"></i>
+                </div>
+                <div>
+                  <div class="fw-medium">{{ producto.nombre }}</div>
+                  <div class="text-muted small">{{ producto.marca }}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Columna: Categoría -->
+            <td>{{ producto.categoria }}</td>
+
+            <!-- Columna: Precio (CurrencyPipe ARS) -->
+            <td class="fw-medium" style="color: var(--vn-verde);">
+              {{ producto.precio | currency:'ARS':'symbol':'1.0-0':'es-AR' }}
+            </td>
+
+            <!-- Columna: Stock (en rojo si es 0) -->
+            <td>
+              <span
+                [class.text-danger]="producto.stock === 0"
+                [class.fw-bold]="producto.stock === 0">
+                {{ producto.stock }}
+              </span>
+            </td>
+
+            <!-- Columna: Estado -->
+            <td>
+              <span [class]="producto.disponible ? 'badge-disponible' : 'badge-no-disponible'">
+                {{ producto.disponible ? 'Disponible' : 'No disponible' }}
+              </span>
+            </td>
+
+            <!-- Columna: Acciones -->
+            <td class="text-center">
+
+              <!-- Ver: disponible para todos -->
+              <button
+                class="btn btn-sm btn-outline-secondary me-1"
+                (click)="verDetalle(producto.id)"
+                matTooltip="Ver detalle"
+                matTooltipPosition="above">
+                <i class="bi bi-eye"></i>
+              </button>
+
+              <!-- Editar y Eliminar: solo para admin -->
+              <ng-container *ngIf="esAdmin">
+                <button
+                  class="btn btn-sm btn-outline-primary me-1"
+                  (click)="editarProducto(producto.id)"
+                  matTooltip="Editar"
+                  matTooltipPosition="above">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="eliminarProducto(producto)"
+                  matTooltip="Eliminar"
+                  matTooltipPosition="above">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </ng-container>
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Estado vacío -->
+      <div *ngIf="productosFiltrados.length === 0" class="empty-state">
+        <i class="bi bi-search d-block"></i>
+        <p *ngIf="terminoBusqueda || categoriaFiltrada">
+          No se encontraron productos con los filtros aplicados.
+        </p>
+        <p *ngIf="!terminoBusqueda && !categoriaFiltrada">
+          No hay productos en el catálogo todavía.
+        </p>
+        <button
+          *ngIf="terminoBusqueda || categoriaFiltrada"
+          class="btn btn-vn-outline"
+          (click)="limpiarFiltros()">
+          <i class="bi bi-x-circle me-1"></i> Limpiar filtros
+        </button>
+        <a
+          *ngIf="!terminoBusqueda && !categoriaFiltrada && esAdmin"
+          routerLink="/productos/nuevo"
+          class="btn btn-vn-primary">
+          <i class="bi bi-plus me-1"></i> Agregar producto
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Contador de resultados -->
+    <div
+      *ngIf="!cargando && productosFiltrados.length > 0"
+      class="text-muted small mt-2 text-end">
+      Mostrando {{ productosFiltrados.length }} de {{ productos.length }} producto(s)
+    </div>
+
+  </div>
+</div>

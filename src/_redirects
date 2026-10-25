@@ -1,0 +1,7 @@
+/* Archivo requerido por Netlify para que el routing de Angular funcione.
+   Sin este archivo, al refrescar una página como /productos o /inicio
+   Netlify devuelve un 404 porque busca ese archivo físicamente.
+   Con este redirect, TODAS las rutas apuntan a index.html y Angular
+   se encarga del routing del lado del cliente. */
+
+/*    /index.html   200

@@ -1,0 +1,185 @@
+<div class="page-container">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+
+        <!-- Spinner de carga -->
+        <div *ngIf="cargando" class="loading-container">
+          <div class="spinner-border" style="color: var(--vn-verde);" role="status"></div>
+          <span>Cargando producto...</span>
+        </div>
+
+        <!-- Error -->
+        <div *ngIf="error && !cargando" class="alert alert-danger alert-vn">
+          <i class="bi bi-exclamation-circle me-2"></i>{{ error }}
+          <button class="btn btn-sm btn-vn-outline ms-3" (click)="cancelar()">Volver</button>
+        </div>
+
+        <!-- Formulario (solo si no hay error ni está cargando) -->
+        <div *ngIf="!cargando && !error">
+
+          <div class="mb-4">
+            <button class="btn btn-sm btn-vn-outline mb-3" (click)="cancelar()">
+              <i class="bi bi-arrow-left me-1"></i> Volver
+            </button>
+            <h1 class="section-title">
+              <i class="bi bi-pencil-square me-2"></i>Editar producto
+            </h1>
+            <p class="section-subtitle mb-0">
+              Modificando: <strong>{{ nombreProducto }}</strong>
+            </p>
+          </div>
+
+          <div class="card-vn p-4">
+            <form [formGroup]="formulario" (ngSubmit)="onGuardar()" novalidate>
+
+              <div class="row g-3">
+
+                <!-- Nombre -->
+                <div class="col-12">
+                  <label for="edit-nombre" class="form-label fw-medium">
+                    Nombre <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-nombre"
+                    class="form-control"
+                    [class.is-invalid]="f['nombre'].invalid && f['nombre'].touched"
+                    formControlName="nombre">
+                  <div class="invalid-feedback">
+                    <span *ngIf="f['nombre'].errors?.['required']">El nombre es obligatorio.</span>
+                    <span *ngIf="f['nombre'].errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+                  </div>
+                </div>
+
+                <!-- Categoría y Marca -->
+                <div class="col-md-6">
+                  <label for="edit-categoria" class="form-label fw-medium">
+                    Categoría <span class="text-danger">*</span>
+                  </label>
+                  <select
+                    id="edit-categoria"
+                    class="form-select"
+                    [class.is-invalid]="f['categoria'].invalid && f['categoria'].touched"
+                    formControlName="categoria">
+                    <option value="">Seleccioná una categoría</option>
+                    <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+                  </select>
+                  <div class="invalid-feedback">Seleccioná una categoría.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="edit-marca" class="form-label fw-medium">
+                    Marca <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-marca"
+                    class="form-control"
+                    [class.is-invalid]="f['marca'].invalid && f['marca'].touched"
+                    formControlName="marca">
+                  <div class="invalid-feedback">La marca es obligatoria.</div>
+                </div>
+
+                <!-- Precio y Stock -->
+                <div class="col-md-6">
+                  <label for="edit-precio" class="form-label fw-medium">
+                    Precio ($) <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="edit-precio"
+                    class="form-control"
+                    [class.is-invalid]="f['precio'].invalid && f['precio'].touched"
+                    formControlName="precio"
+                    min="1">
+                  <div class="invalid-feedback">
+                    <span *ngIf="f['precio'].errors?.['required']">El precio es obligatorio.</span>
+                    <span *ngIf="f['precio'].errors?.['min']">El precio debe ser mayor a 0.</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="edit-stock" class="form-label fw-medium">
+                    Stock <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="edit-stock"
+                    class="form-control"
+                    [class.is-invalid]="f['stock'].invalid && f['stock'].touched"
+                    formControlName="stock"
+                    min="0">
+                  <div class="invalid-feedback">El stock no puede ser negativo.</div>
+                </div>
+
+                <!-- URL de imagen -->
+                <div class="col-12">
+                  <label for="edit-imagenUrl" class="form-label fw-medium">
+                    URL de imagen <span class="text-muted small">(opcional)</span>
+                  </label>
+                  <input
+                    type="url"
+                    id="edit-imagenUrl"
+                    class="form-control"
+                    formControlName="imagenUrl"
+                    placeholder="https://...">
+                </div>
+
+                <!-- Descripción -->
+                <div class="col-12">
+                  <label for="edit-descripcion" class="form-label fw-medium">
+                    Descripción <span class="text-muted small">(opcional)</span>
+                  </label>
+                  <textarea
+                    id="edit-descripcion"
+                    class="form-control"
+                    formControlName="descripcion"
+                    rows="3"></textarea>
+                </div>
+
+                <!-- Disponible -->
+                <div class="col-12">
+                  <div class="form-check form-switch">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="edit-disponible"
+                      formControlName="disponible"
+                      role="switch">
+                    <label class="form-check-label fw-medium" for="edit-disponible">
+                      Producto disponible para la venta
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+
+              <p class="text-muted small mt-3 mb-0">
+                <span class="text-danger">*</span> Campos obligatorios
+              </p>
+
+              <!-- Botones -->
+              <div class="d-flex gap-2 justify-content-end mt-4 pt-3 border-top">
+                <button type="button" class="btn btn-vn-outline" (click)="cancelar()">
+                  Cancelar
+                </button>
+                <button type="submit" class="btn btn-vn-primary" [disabled]="guardando">
+                  <span *ngIf="!guardando">
+                    <i class="bi bi-floppy me-1"></i> Guardar cambios
+                  </span>
+                  <span *ngIf="guardando">
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                    Guardando...
+                  </span>
+                </button>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

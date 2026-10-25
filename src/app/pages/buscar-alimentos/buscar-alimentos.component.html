@@ -1,0 +1,191 @@
+<div class="page-container">
+  <div class="container">
+
+    <!-- ── Encabezado ────────────────────────────────────────────────── -->
+    <div class="mb-4">
+      <h1 class="section-title">
+        <i class="bi bi-search me-2"></i>Buscar información de alimentos
+      </h1>
+      <p class="section-subtitle">
+        Consultá información nutricional de alimentos utilizando una API externa.
+      </p>
+    </div>
+
+    <!-- ── Buscador ───────────────────────────────────────────────────── -->
+    <div class="card-vn p-4 mb-4">
+      <div class="row g-2 align-items-end">
+
+        <div class="col-12 col-sm">
+          <label for="input-alimento" class="form-label fw-medium">
+            Nombre del alimento
+          </label>
+          <div class="input-group">
+            <span class="input-group-text bg-white">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input
+              type="text"
+              id="input-alimento"
+              class="form-control"
+              placeholder='Ej: chocolate amargo, avena, miel...'
+              [(ngModel)]="terminoBusqueda"
+              name="termino"
+              (keydown)="onKeydown($event)"
+              [disabled]="cargando">
+          </div>
+        </div>
+
+        <div class="col-auto d-flex gap-2">
+          <button
+            id="btn-buscar"
+            type="button"
+            class="btn btn-vn-primary"
+            [disabled]="cargando || !terminoBusqueda.trim()"
+            (click)="buscar()">
+            <span *ngIf="!cargando">
+              <i class="bi bi-search me-1"></i> Buscar
+            </span>
+            <span *ngIf="cargando">
+              <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+              Buscando...
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-vn-outline"
+            (click)="limpiar()"
+            *ngIf="buscado">
+            <i class="bi bi-x me-1"></i> Limpiar
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Error ──────────────────────────────────────────────────────── -->
+    <div *ngIf="mensajeError && !cargando" class="alert alert-danger alert-vn d-flex align-items-center gap-2">
+      <i class="bi bi-wifi-off fs-5"></i>
+      <span>{{ mensajeError }}</span>
+    </div>
+
+    <!-- ── Spinner de carga ────────────────────────────────────────────── -->
+    <div *ngIf="cargando" class="loading-container">
+      <div class="spinner-border" style="color: var(--vn-verde);" role="status"></div>
+      <span>Buscando en Open Food Facts...</span>
+    </div>
+
+    <!-- ── Resultados ────────────────────────────────────────────────── -->
+    <div *ngIf="!cargando && resultados.length > 0">
+
+      <p class="text-muted small mb-3">
+        <i class="bi bi-check-circle me-1" style="color: var(--vn-verde);"></i>
+        Se encontraron <strong>{{ resultados.length }}</strong> resultado(s) para
+        "<strong>{{ terminoBusqueda }}</strong>"
+      </p>
+
+      <div class="row g-3">
+        <!-- *ngFor: iteramos sobre los alimentos devueltos por la API -->
+        <div class="col-sm-6 col-lg-4" *ngFor="let alimento of resultados">
+
+          <div class="card-vn food-card h-100">
+
+            <!-- Imagen del alimento -->
+            <div class="food-card-img-container">
+              <img
+                *ngIf="alimento.imagenUrl"
+                [src]="alimento.imagenUrl"
+                [alt]="alimento.nombre"
+                class="food-card-img">
+              <div *ngIf="!alimento.imagenUrl" class="food-card-placeholder">
+                <i class="bi bi-basket2"></i>
+              </div>
+
+              <!-- Badge Nutri-Score (si está disponible) -->
+              <span
+                *ngIf="alimento.nutriScore"
+                class="nutriscore-badge"
+                [style.background-color]="getNutriscoreColor(alimento.nutriScore)"
+                [title]="'Nutri-Score: ' + alimento.nutriScore">
+                {{ alimento.nutriScore }}
+              </span>
+            </div>
+
+            <div class="p-3 d-flex flex-column h-100">
+
+              <!-- Nombre -->
+              <h2 class="food-card-nombre">{{ alimento.nombre }}</h2>
+
+              <!-- Marca -->
+              <p class="food-card-marca">
+                <i class="bi bi-tag me-1"></i>{{ alimento.marca }}
+              </p>
+
+              <!-- Categoría -->
+              <p class="food-card-categoria" *ngIf="alimento.categoria !== 'No disponible'">
+                {{ alimento.categoria }}
+              </p>
+
+              <!-- Información nutricional (por 100g) -->
+              <div class="food-card-nutricion mt-auto">
+                <div class="small fw-medium text-muted mb-1">
+                  Por 100g:
+                </div>
+                <div class="d-flex gap-3">
+                  <div class="food-nutricion-item">
+                    <i class="bi bi-lightning-fill text-warning"></i>
+                    <span>{{ alimento.calorias !== null ? (alimento.calorias | number:'1.0-0') + ' kcal' : 'N/D' }}</span>
+                  </div>
+                  <div class="food-nutricion-item">
+                    <i class="bi bi-egg-fill" style="color: #a0522d;"></i>
+                    <span>{{ alimento.proteinas !== null ? (alimento.proteinas | number:'1.0-1') + 'g prot.' : 'N/D' }}</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Sin resultados ────────────────────────────────────────────── -->
+    <div
+      *ngIf="!cargando && buscado && resultados.length === 0 && !mensajeError"
+      class="empty-state">
+      <i class="bi bi-emoji-neutral d-block"></i>
+      <p>No se encontraron resultados para "<strong>{{ terminoBusqueda }}</strong>".</p>
+      <p class="small text-muted">Probá con un término más general o en inglés.</p>
+    </div>
+
+    <!-- ── Estado inicial (antes de buscar) ─────────────────────────── -->
+    <div *ngIf="!buscado && !cargando" class="initial-state text-center py-5">
+      <i class="bi bi-basket2 initial-state-icon"></i>
+      <p class="text-muted mt-3">
+        Ingresá el nombre de un alimento y presioná <strong>Buscar</strong>.
+      </p>
+      <p class="small text-muted">Podés buscar en español o en inglés.</p>
+    </div>
+
+    <!-- ── Footer: fuente de datos ────────────────────────────────────── -->
+    <div class="food-api-footer mt-5">
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <i class="bi bi-info-circle" style="color: var(--vn-verde);"></i>
+        <span class="fw-semibold" style="color: var(--vn-verde);">Consulta de API externa</span>
+      </div>
+      <p class="mb-1">
+        La información es obtenida desde una fuente externa:
+        <a href="https://world.openfoodfacts.org" target="_blank" rel="noopener noreferrer"
+          style="color: var(--vn-verde); font-weight: 600;">
+          Open Food Facts
+        </a>.
+      </p>
+      <p class="mb-0 small text-muted">
+        Esta pantalla es de <strong>solo consulta</strong>.
+        Los datos no se mezclan con los productos administrados en la tienda.
+      </p>
+    </div>
+
+  </div>
+</div>

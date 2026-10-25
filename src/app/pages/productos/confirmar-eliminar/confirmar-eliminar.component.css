@@ -1,0 +1,38 @@
+.dialog-container {
+  padding: 1.5rem;
+  text-align: center;
+  max-width: 380px;
+}
+
+.dialog-icon {
+  font-size: 3rem;
+  color: #e53e3e;
+  margin-bottom: 0.75rem;
+}
+
+.dialog-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--vn-texto);
+  margin-bottom: 0.5rem;
+}
+
+.dialog-content {
+  color: var(--vn-texto-suave);
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+.dialog-warning {
+  font-size: 0.82rem;
+  color: #e53e3e;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding-top: 1rem;
+}

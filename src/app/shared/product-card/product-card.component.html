@@ -1,0 +1,59 @@
+<!-- =========================================================
+  ProductCardComponent — Tarjeta de producto reutilizable
+
+  Conceptos Angular aplicados:
+  - Interpolación:       {{ producto.nombre }}
+  - Property Binding:    [src]="producto.imagenUrl"
+  - Event Binding:       (click)="onVerMas()"
+  - *ngIf:              *ngIf="producto.imagenUrl"
+  - Pipe (currency):     {{ producto.precio | currency:'ARS':'symbol':'1.0-0':'es-AR' }}
+========================================================= -->
+
+<div class="card h-100 product-card-vn">
+
+  <!-- Imagen del producto (Property Binding: [src] y [alt]) -->
+  <img
+    *ngIf="producto.imagenUrl"
+    [src]="producto.imagenUrl"
+    [alt]="producto.nombre"
+    class="card-img-top product-card-img">
+
+  <!-- Placeholder si no hay imagen (*ngIf negado) -->
+  <div *ngIf="!producto.imagenUrl" class="product-card-placeholder">
+    <i class="bi bi-image"></i>
+  </div>
+
+  <div class="card-body d-flex flex-column">
+
+    <!-- Badge de categoría (Interpolación) -->
+    <span class="badge-categoria mb-2">{{ producto.categoria }}</span>
+
+    <!-- Nombre del producto (Interpolación) -->
+    <h2 class="card-title product-card-title">{{ producto.nombre }}</h2>
+
+    <!-- Precio usando CurrencyPipe (Pipe) -->
+    <p class="product-card-precio">
+      {{ producto.precio | currency:'ARS':'symbol':'1.0-0':'es-AR' }}
+    </p>
+
+    <!-- Spacer para empujar el botón hacia abajo -->
+    <div class="mt-auto">
+
+      <!-- Badge de disponibilidad (Property Binding en [class]) -->
+      <span
+        class="d-inline-block mb-2"
+        [class]="producto.disponible ? 'badge-disponible' : 'badge-no-disponible'">
+        {{ producto.disponible ? 'Disponible' : 'Sin stock' }}
+      </span>
+
+      <!-- Botón "Ver más" (Event Binding: (click)) -->
+      <!-- Al hacer clic, el hijo emite el evento @Output al padre -->
+      <button
+        class="btn btn-vn-primary w-100"
+        (click)="onVerMas()">
+        <i class="bi bi-eye me-1"></i> Ver más
+      </button>
+
+    </div>
+  </div>
+</div>
